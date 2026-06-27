@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Demos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#1B3D2B',
+                        matcha: '#82A67D',
+                        cream: '#FDFBF7',
+                        darkBg: '#121810'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            min-height: 100vh;
+            position: relative;
+            z-index: 0;
+            background-image: url('https://iprettyyou.app/storage/event_covers/69d930ad6d7a9.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: rgba(0, 0, 0, 0.6); 
+        }
+
+        .glass {
+            background: rgba(30, 38, 29, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 103, 65, 0.3);
+            transition: background 0.3s ease;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 transition-colors duration-300">
+
+    <div id="loadingScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-darkBg transition-opacity duration-1000">
+        <img src="https://iprettyyou.app/assets/images/logo-solo.webp" alt="Logo" class="w-32 h-32 mb-6 animate-pulse">
+        <h1 class="text-3xl font-bold text-[#E8F5E9] mb-4">Bienvenido</h1>
+        <div class="w-12 h-12 border-4 border-matcha border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <div class="max-w-5xl mx-auto">
+        <header class="mb-8 flex justify-between items-center text-left">
+            <div class="flex items-center gap-4">
+                <img src="https://iprettyyou.app/assets/images/logo-solo.webp" alt="Logo" class="w-16 h-16 object-contain">
+                <div>
+                    <h1 class="text-3xl font-bold text-[#E8F5E9]">Generador de Demos</h1>
+                    <p class="text-[#A8C6A5]">STD, ID y Detalles del Evento.</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="md:col-span-1 glass p-6 rounded-3xl shadow-xl h-fit space-y-4">
+                
+                <div>
+                    <label class="block text-sm font-medium text-[#E8F5E9]">Tipo de Plantilla</label>
+                    <select id="categoryType" class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" onchange="updateForm()">
+                        <option value="std">Save The Date (STD)</option>
+                        <option value="id">Invitación Digital (ID)</option>
+                        <option value="detalle">Detalle del Evento</option>
+                        <option value="detalles_genericos">Detalles del Evento Genéricos</option>
+                    </select>
+                </div>
+
+                <div id="modeWrapper">
+                    <label class="block text-sm font-medium text-[#E8F5E9]">Modo</label>
+                    <select id="eventType" class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" onchange="updateForm()">
+                        <option value="normal">Sin padres</option>
+                        <option value="padres">Con padres</option>
+                    </select>
+                </div>
+
+                <hr class="border-matcha/20">
+
+                <div id="basicFields" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-[#E8F5E9]">Nombre del Invitado</label>
+                        <input type="text" id="guestName" placeholder="Ej. Juan Pérez" class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" oninput="generateTemplates()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-[#E8F5E9]">Nombre del Evento</label>
+                        <input type="text" id="eventName" placeholder="Ej. Boda, XV años..." class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" oninput="generateTemplates()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-[#E8F5E9]">Fecha</label>
+                        <input type="date" id="eventDate" class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" oninput="generateTemplates()">
+                    </div>
+                </div>
+
+                <div id="stdFields" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-[#E8F5E9]">Ubicación</label>
+                        <input type="text" id="eventLocation" value="San Nicolás, Nuevo León." class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" oninput="generateTemplates()">
+                    </div>
+                </div>
+
+                <div id="idFields" class="space-y-4 hidden">
+                    <label class="block text-sm font-medium text-[#E8F5E9]">Pases asignados</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="adults" min="0" placeholder="Adultos" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                        <input type="number" id="youths" min="0" placeholder="Jóvenes" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="includeChildren" checked onchange="toggleChildren()" class="accent-forest">
+                        <label for="includeChildren" class="text-sm text-[#E8F5E9]">Incluir niños</label>
+                    </div>
+                    <div id="childrenContainer">
+                        <input type="number" id="children" min="0" placeholder="Niños" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-[#E8F5E9]">Enlace ID</label>
+                        <input type="text" id="idLink" placeholder="https://..." class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" oninput="generateTemplates()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-[#E8F5E9]">Fecha límite respuesta</label>
+                        <input type="text" id="rsvpDate" placeholder="Ej. 10 de noviembre" class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" oninput="generateTemplates()">
+                    </div>
+                </div>
+
+                <div id="detalleFields" class="hidden space-y-4">
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-sm text-[#E8F5E9]">
+                            <input type="checkbox" id="showCeremony" checked onchange="toggleDetalleSections()" class="accent-forest"> Ceremonia
+                        </label>
+                        <div id="secCeremony" class="space-y-1">
+                            <input type="text" id="time1" placeholder="Hora" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                            <input type="text" id="place1" placeholder="Lugar" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                            <input type="text" id="address1" placeholder="Dirección" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-sm text-[#E8F5E9]">
+                            <input type="checkbox" id="showReception" checked onchange="toggleDetalleSections()" class="accent-forest"> Recepción
+                        </label>
+                        <div id="secReception" class="space-y-1">
+                            <input type="text" id="time2" placeholder="Hora" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                            <input type="text" id="place2" placeholder="Lugar" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                            <input type="text" id="address2" placeholder="Dirección" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-2 text-sm text-[#E8F5E9]">
+                            <input type="checkbox" id="showOtro" onchange="toggleDetalleSections()" class="accent-forest"> Otro
+                        </label>
+                        <div id="secOtro" class="space-y-1 hidden">
+                            <input type="text" id="labelOtro" placeholder="Nombre de sección" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                            <input type="text" id="textOtro" placeholder="Descripción" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                        </div>
+                    </div>
+                    <textarea id="dressCode" placeholder="Código de Vestimenta" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()"></textarea>
+                    <input type="text" id="detailsLink" placeholder="Enlace del evento" class="w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white text-sm" oninput="generateTemplates()">
+                </div>
+
+                <div id="detallesGenericosFields" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-[#E8F5E9]">Link invitación</label>
+                        <input type="text" id="linkGenerico" placeholder="https://..." class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" oninput="generateTemplates()">
+                    </div>
+                </div>
+
+                <div id="parentsField" class="hidden">
+                    <label class="block text-sm font-medium text-[#E8F5E9]">Nombres de los Padres</label>
+                    <input type="text" id="parentsName" placeholder="Ej. Juan y María" class="mt-1 w-full p-2 border border-matcha/30 rounded-xl focus:ring-2 focus:ring-matcha outline-none bg-darkBg/50 text-white" oninput="generateTemplates()">
+                </div>
+            </div>
+
+            <div class="md:col-span-2 space-y-6" id="outputArea">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatDate(dateString) {
+            if (!dateString) return "[Fecha]";
+            const date = new Date(dateString + 'T00:00:00');
+            const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+            return `${date.getDate()} de ${months[date.getMonth()]} de ${date.getFullYear()}`;
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const screen = document.getElementById('loadingScreen');
+                screen.style.opacity = '0';
+                setTimeout(() => screen.style.display = 'none', 1000);
+            }, 4000);
+        });
+
+        function toggleChildren() {
+            const container = document.getElementById('childrenContainer');
+            const checkbox = document.getElementById('includeChildren');
+            container.style.display = checkbox.checked ? 'block' : 'none';
+            generateTemplates();
+        }
+
+        function toggleDetalleSections() {
+            document.getElementById('secCeremony').style.display = document.getElementById('showCeremony').checked ? 'block' : 'none';
+            document.getElementById('secReception').style.display = document.getElementById('showReception').checked ? 'block' : 'none';
+            document.getElementById('secOtro').style.display = document.getElementById('showOtro').checked ? 'block' : 'none';
+            generateTemplates();
+        }
+
+        function updateForm() {
+            const category = document.getElementById('categoryType').value;
+            const type = document.getElementById('eventType').value;
+            
+            document.getElementById('stdFields').style.display = category === 'std' ? 'block' : 'none';
+            document.getElementById('idFields').style.display = category === 'id' ? 'block' : 'none';
+            document.getElementById('detalleFields').style.display = category === 'detalle' ? 'block' : 'none';
+            document.getElementById('detallesGenericosFields').style.display = category === 'detalles_genericos' ? 'block' : 'none';
+            
+            document.getElementById('modeWrapper').style.display = (category === 'detalle' || category === 'detalles_genericos') ? 'none' : 'block';
+            document.getElementById('parentsField').style.display = (category !== 'detalle' && category !== 'detalles_genericos' && type === 'padres') ? 'block' : 'none';
+            
+            generateTemplates();
+        }
+
+        function copyToClipboard(btn, elementId) {
+            const text = document.getElementById(elementId).innerText;
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            
+            const originalText = btn.innerText;
+            btn.innerText = "¡Copiado!";
+            btn.classList.replace('bg-matcha', 'bg-forest');
+            btn.classList.add('text-white');
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.replace('bg-forest', 'bg-matcha');
+                btn.classList.remove('text-white');
+            }, 2000);
+        }
+
+        function generateTemplates() {
+            const category = document.getElementById('categoryType').value;
+            const type = document.getElementById('eventType').value;
+            
+            const guestName = document.getElementById('guestName').value || "[Nombre invitado]";
+            const eventName = document.getElementById('eventName').value || "[Evento]";
+            const date = formatDate(document.getElementById('eventDate').value);
+            
+            const outputArea = document.getElementById('outputArea');
+            outputArea.innerHTML = '';
+
+            let templates = [];
+            
+            const buttonsSTD = "\n\n[Botones]\n(Gracias!)\n(No asistire (dar de baja))";
+            const buttonsID = "\n\n[Botones]\n(Botón de Confirmar)\n(Enlace de Invitación Digital)\n(No Asistiré)";
+            const buttonsDetalle = "\n\n[Botones]\n(Ver detalles del evento)\n(Gracias!)\n(No asistire (dar de baja))";
+            const buttonsGenericos = "\n\n[Botones]\n(Ver detalles del evento) " + (document.getElementById('linkGenerico').value || "[link invitacion]") + "\n(¡Gracias!)\n(No asistiré (dar de baja))";
+            
+            if (category === 'std') {
+                const parents = document.getElementById('parentsName').value || "[Nombres Papás]";
+                const location = document.getElementById('eventLocation').value || "[Ubicación]";
+                templates = type === 'normal' 
+                    ? [{ id: '1e11_std_video', title: 'Video' }, { id: '1e21_std_pdf', title: 'PDF' }, { id: '1e31_std_foto', title: 'Foto' }]
+                    : [{ id: '1e12_std_padres_video', title: 'Video' }, { id: '1e22_std_padres_pdf', title: 'PDF' }, { id: '1e32_std_padres_foto', title: 'Foto' }];
+                
+                templates.forEach((t, i) => {
+                    const baseText = type === 'normal' 
+                        ? `Hola ${guestName}\n\nLe notificamos que usted se encuentra en la lista de invitados para el evento: ${eventName}.\n\nPor favor, tome nota de la siguiente información:\n*Fecha*: ${date}\n*Ubicación*: ${location}\n\nMás adelante recibirá la invitación formal con más detalles.`
+                        : `Hola ${guestName}\n\nLe notificamos que usted se encuentra en la lista de invitados para el evento: ${eventName}, organizado por sus padres: ${parents}.\n\nPor favor, tome nota de la siguiente información:\n*Fecha*: ${date}\n*Ubicación*: ${location}\n\nMás adelante recibirá la invitación formal con más detalles.`;
+                    
+                    renderTemplateCard(t.id, baseText + buttonsSTD, i);
+                });
+
+            } else if (category === 'id') {
+                const adults = document.getElementById('adults').value || 0;
+                const youths = document.getElementById('youths').value || 0;
+                const includeChildren = document.getElementById('includeChildren').checked;
+                const children = includeChildren ? (document.getElementById('children').value || 0) : null;
+                const parents = document.getElementById('parentsName').value || "[Nombres Papás]";
+                const link = document.getElementById('idLink').value || "[Enlace]";
+                const rsvpDate = document.getElementById('rsvpDate').value || "[Fecha límite]";
+                
+                let passesStr = `${adults} adultos, ${youths} jóvenes`;
+                if (includeChildren) passesStr += `, ${children} niños`;
+
+                templates = type === 'normal'
+                    ? [{ id: '2e12_id_pdf_mx', title: 'PDF MX' }, { id: '2e22_id_pdf_com', title: 'PDF COM' }]
+                    : [{ id: '2e21_id_padres_pdf_com', title: 'PDF COM' }, { id: '2e11_id_padres_pdf_mx', title: 'PDF MX' }];
+                
+                templates.forEach((t, i) => {
+                    const baseText = type === 'normal'
+                        ? `Hola ${guestName}\n\nUsted forma parte de la lista de invitados para el evento: ${eventName}, que se llevará a cabo el ${date}.\n\n*Pases asignados*:\n${passesStr}\n${link}\n\nPor favor déjenos una respuesta antes del: ${rsvpDate}\n\nPuede ver los detalles del evento completos en el botón de abajo o en el PDF adjunto.`
+                        : `Hola ${guestName}\n\nUsted forma parte de la lista de invitados para el evento: ${eventName}, que se llevará a cabo el ${date}, organizado por sus padres: ${parents}.\n\n*Pases asignados*:\n${passesStr}\n${link}\n\nPor favor déjenos una respuesta antes del: ${rsvpDate}\n\nPuede ver los detalles del evento completos en el botón de abajo o en el PDF adjunto.`;
+                    
+                    renderTemplateCard(t.id, baseText + buttonsID, i);
+                });
+
+            } else if (category === 'detalle') {
+                let detailsText = `Hola ${guestName}\n\nLe recordamos que usted se encuentra en la lista de confirmados para el evento: *${eventName}*\n\n*Fecha*: ${date}\n\n`;
+                
+                if (document.getElementById('showCeremony').checked) {
+                    detailsText += `*Ceremonia*: ${document.getElementById('time1').value || "[Hora]"}\n*Lugar*: ${document.getElementById('place1').value || "[Lugar]"}\n*Dirección*: ${document.getElementById('address1').value || "[Dir]"}\n\n`;
+                }
+                if (document.getElementById('showReception').checked) {
+                    detailsText += `*Recepción*: ${document.getElementById('time2').value || "[Hora]"}\n*Lugar*: ${document.getElementById('place2').value || "[Lugar]"}\n*Dirección*: ${document.getElementById('address2').value || "[Dir]"}\n\n`;
+                }
+                if (document.getElementById('showOtro').checked) {
+                    detailsText += `*${document.getElementById('labelOtro').value || "Detalle"}*: ${document.getElementById('textOtro').value || "[Info]"}\n\n`;
+                }
+                
+                detailsText += `Código de Vestimenta:\n${document.getElementById('dressCode').value || "[Vestimenta]"}\n\nSi tiene alguna pregunta, duda o comentario, escríbanos por este medio; con gusto le atenderemos.\n\nVer detalles del evento\n${document.getElementById('detailsLink').value || "[www.enlace.com]"}`;
+                
+                renderTemplateCard("detalle_evento", detailsText + buttonsDetalle, 0);
+
+            } else if (category === 'detalles_genericos') {
+                const textGenerico = `Hola ${guestName}\n\nLe recordamos que usted se encuentra en la *lista de confirmados* para el evento: *${eventName}*.\n\n¡El gran día está cada vez más cerca! \n*Fecha*: ${date}\n\nPara consultar toda la información como: *horario, ubicación, código de vestimenta y demás detalles*, presione el botón *"Ver detalles del evento"*. \n\nSi por alguna razón ya no le será posible asistir, le agradeceremos que nos lo informe seleccionando *"No asistiré (dar de baja)"*. Esto ayudará a los anfitriones con la organización del evento.\n\nSi tiene alguna duda o requiere asistencia, escríbanos` + buttonsGenericos;
+                renderTemplateCard("detalles_genericos", textGenerico, 0);
+            }
+        }
+
+        function renderTemplateCard(id, text, index) {
+            const card = document.createElement('div');
+            card.className = 'glass p-6 rounded-3xl shadow-lg border';
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-bold text-[#E8F5E9]">${id}</span>
+                    <button onclick="copyToClipboard(this, 'text-${index}')" class="text-sm bg-matcha text-forest hover:bg-forest hover:text-white px-4 py-1.5 rounded-full transition shadow-sm font-semibold">
+                        Copiar
+                    </button>
+                </div>
+                <pre id="text-${index}" class="whitespace-pre-wrap text-[#A8C6A5] bg-darkBg/50 p-4 rounded-2xl font-sans text-sm">${text}</pre>
+            `;
+            document.getElementById('outputArea').appendChild(card);
+        }
+
+        window.onload = generateTemplates;
+    </script>
+</body>
+</html>
